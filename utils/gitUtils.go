@@ -22,7 +22,7 @@ func GetGitRootDir() (string, error) {
 	} else if err != nil {
 		return gitRootDir, err
 	} else {
-		err := errors.New("Could not locate git repo.\n")
+		err := errors.New("Not a git repository")
 		return gitRootDir, err
 	}
 }
