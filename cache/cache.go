@@ -56,19 +56,12 @@ func getCacheSettings() (CacheSettings, error) {
 	}
 	settings.config = config
 
-	/*
-		log.Print("root: " + settings.rootDir)
-		log.Print("sgit: " + settings.sgitDir)
-		log.Print("branch: " + settings.branch)
-		log.Print("cache: " + settings.cachePrefix)
-	*/
-
 	return settings, err
 }
 
 func SaveCache() {
 	settings, err := getCacheSettings()
-	if err != nil {
+	if err != nil && os.IsNotExist(err) {
 		log.Print(err)
 		return
 	}
@@ -103,7 +96,7 @@ func RestoreCache() {
 
 	err = os.Chdir(settings.cachePrefix)
 	if err != nil {
-		log.Printf("Could not locate cache for %v.\n", settings.branch)
+		log.Print(noCacheError(settings.branch))
 	}
 	cacheDirs, err := getCacheDirs(settings)
 	if err != nil {
