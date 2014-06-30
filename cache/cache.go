@@ -73,6 +73,9 @@ func SaveCache() {
 	}
 
 	for _, dir := range targetDirs {
+		if 0 == len(dir) {
+			continue
+		}
 		log.Print(dir)
 		relDir, err := filepath.Rel(settings.rootDir, dir)
 		if err != nil {
@@ -105,6 +108,9 @@ func RestoreCache() {
 	}
 
 	for _, dir := range cacheDirs {
+		if 0 == len(dir) {
+			continue
+		}
 		relDir, err := filepath.Rel(settings.cachePrefix, dir)
 		if err != nil {
 			log.Print(err)
