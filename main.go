@@ -17,7 +17,6 @@ func main() {
 }
 
 func init() {
-	config.InitFlags()
 	utils.MakeSgitRootDir()
 	err := utils.NavToGitRootDir()
 	if err != nil {

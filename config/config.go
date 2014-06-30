@@ -57,7 +57,11 @@ func Configure() {
 	}
 }
 
-func InitFlags() {
+func init() {
+	initFlags()
+}
+
+func initFlags() {
 	flag.StringVar(&projectType, "p", unset, "project type.  Run `sgit` for more information.")
 }
 
