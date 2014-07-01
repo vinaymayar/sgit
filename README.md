@@ -6,28 +6,20 @@ sgit caches compiled files for each branch to avoid recompiling source files whe
 
 ###Usage
 
-Use sgit instead of git:
+To tell sgit where your compiled files live, run
+
+```
+sgit configure <project type>
+```
+
+Currently, only sbt projects are supported.  To clear the cached files for a branch, or for all branches if none are specified,
+
+```
+sgit clear-cache [<branch name>...]
+```
+
+Add the following to your shell startup script to use sgit instead of git:
 
 ```
 alias git=sgit
 ```
-
-To tell sgit where your compiled files live, run
-
-```
-git configure -p [project type]
-```
-
-Currently, only sbt projects are supported.  To clear the cached files for a branch,
-
-```
-git clear-cache [branch names...]
-```
-
-or to clear all cached files
-
-```
-git clear-cache
-```
-
-Use sgit as you would use git.
