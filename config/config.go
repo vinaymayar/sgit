@@ -2,7 +2,6 @@ package config
 
 import (
 	"encoding/json"
-	"flag"
 	"io/ioutil"
 	"log"
 	"os"
@@ -16,11 +15,8 @@ type Config struct {
 }
 
 const (
-	unset          = "unset"
 	configFileName = "sgit.config"
 )
-
-var projectType string
 
 func (config Config) Write() error {
 	out, err := json.Marshal(config)
@@ -36,28 +32,20 @@ func (config Config) Write() error {
 	return ioutil.WriteFile(configPath, out, 0666)
 }
 
-func Configure() {
+func Configure(args []string) {
 	config, err := GetConfig()
 	if err != nil && !os.IsNotExist(err) {
 		log.Print(err)
 	}
 
-	if isSet(projectType) {
-		config.ProjectType = projectType
+	if len(args) > 1 {
+		config.ProjectType = args[1]
 	}
 
 	err = config.Write()
 	if err != nil {
 		log.Fatal(err)
 	}
-}
-
-func init() {
-	initFlags()
-}
-
-func initFlags() {
-	flag.StringVar(&projectType, "p", unset, "project type.  Run `sgit` for more information.")
 }
 
 func GetConfig() (Config, error) {
@@ -86,8 +74,4 @@ func getConfigPath() (string, error) {
 
 	configPath := filepath.Join(sgitDir, configFileName)
 	return configPath, err
-}
-
-func isSet(str string) bool {
-	return str != unset
 }

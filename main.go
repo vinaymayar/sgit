@@ -1,7 +1,6 @@
 package main
 
 import (
-	"flag"
 	"log"
 	"os"
 
@@ -14,7 +13,6 @@ import (
 var logFlags = 0
 
 func main() {
-	flag.Parse()
 	parse(os.Args[1:])
 }
 
@@ -36,7 +34,7 @@ func parse(args []string) {
 		case cache.IsGitCacheCmd(cmd):
 			git.RunWithCache(args)
 		case config.IsConfigCmd(cmd):
-			config.Configure()
+			config.Configure(args)
 		default:
 			git.Run(args)
 		}
