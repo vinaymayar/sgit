@@ -104,7 +104,7 @@ func ClearCache(args []string) {
 
 		for _, branch := range args[1:] {
 			cachePrefix := filepath.Join(sgitDir, branch)
-			err := utils.Execute("rm", "-r", cachePrefix)
+			_, err = utils.Execute("rm", "-r", cachePrefix)
 
 			if err != nil && os.IsNotExist(err) {
 				log.Print(noCacheError(branch))
