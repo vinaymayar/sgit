@@ -44,4 +44,17 @@ func parse(args []string) {
 }
 
 func help() {
+	helpMsg := `usage: sgit <command> [<args>]
+
+For a list of git commands run ` + "`sgit help`" + `.  To print this help message run ` + "`sgit`" + `.
+
+The sgit-specific commands are
+	configure <project type>
+		Set the project type of this repository.  The available options are (sbt).
+
+	clear-cache [<branch name>...]
+		Clear cached files for branches (or all branches if none are specified).
+`
+
+	log.Print(helpMsg)
 }
