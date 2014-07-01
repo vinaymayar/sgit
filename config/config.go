@@ -18,7 +18,6 @@ type Config struct {
 const (
 	unset          = "unset"
 	configFileName = "sgit.config"
-	configCmd      = "configure"
 )
 
 var projectType string
@@ -35,10 +34,6 @@ func (config Config) Write() error {
 	}
 
 	return ioutil.WriteFile(configPath, out, 0666)
-}
-
-func IsConfigCmd(cmd string) bool {
-	return cmd == configCmd
 }
 
 func Configure() {

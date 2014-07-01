@@ -6,57 +6,12 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/vinaymayar/sgit/config"
 	"github.com/vinaymayar/sgit/utils"
 )
-
-var cacheCmds = map[string]bool{
-	"checkout": true,
-}
 
 var targets = map[string]string{
 	"sbt": "target",
 	"":    "bin",
-}
-
-type CacheSettings struct {
-	rootDir     string
-	sgitDir     string
-	branch      string
-	cachePrefix string
-	config      config.Config
-}
-
-func getCacheSettings() (CacheSettings, error) {
-	settings := *new(CacheSettings)
-	rootDir, err := utils.GetGitRootDir()
-	if err != nil {
-		return settings, err
-	}
-	settings.rootDir = rootDir
-
-	sgitDir, err := utils.GetSgitRootDir()
-	if err != nil {
-		return settings, err
-	}
-	settings.sgitDir = sgitDir
-
-	branch, err := utils.GetBranch()
-	if err != nil {
-		return settings, err
-	}
-	settings.branch = branch
-
-	settings.cachePrefix = filepath.Join(settings.sgitDir, settings.branch)
-	err = os.Mkdir(settings.cachePrefix, 0777)
-
-	config, err := config.GetConfig()
-	if err != nil {
-		return settings, err
-	}
-	settings.config = config
-
-	return settings, err
 }
 
 func SaveCache() {
@@ -76,13 +31,15 @@ func SaveCache() {
 		if 0 == len(dir) {
 			continue
 		}
-		log.Print(dir)
+
 		relDir, err := filepath.Rel(settings.rootDir, dir)
 		if err != nil {
 			log.Print(err)
 			continue
 		}
+
 		log.Printf("Saving %v.\n", relDir)
+
 		_, err = utils.Execute("rsync", "-Rr", relDir, settings.cachePrefix)
 		if err != nil {
 			log.Print(err)
@@ -111,12 +68,15 @@ func RestoreCache() {
 		if 0 == len(dir) {
 			continue
 		}
+
 		relDir, err := filepath.Rel(settings.cachePrefix, dir)
 		if err != nil {
 			log.Print(err)
 			continue
 		}
+
 		log.Printf("Restoring %v.\n", relDir)
+
 		_, err = utils.Execute("rsync", "-Rr", relDir, settings.rootDir)
 		if err != nil {
 			log.Print(err)
@@ -124,8 +84,34 @@ func RestoreCache() {
 	}
 }
 
-func IsCacheCmd(cmd string) bool {
-	return cacheCmds[cmd]
+func ClearCache(args []string) {
+	sgitDir, err := utils.GetSgitRootDir()
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(args) == 1 {
+
+		utils.Execute(
+			"find",
+			sgitDir,
+			"-d",
+			"-mindepth", "1",
+			"-type", "d",
+			"-exec", "rm", "-r", "{}", ";")
+
+	} else {
+
+		for _, branch := range args[1:] {
+			cachePrefix := filepath.Join(sgitDir, branch)
+			err := utils.Execute("rm", "-r", cachePrefix)
+
+			if err != nil && os.IsNotExist(err) {
+				log.Print(noCacheError(branch))
+			}
+		}
+
+	}
 }
 
 func getCacheDirs(settings CacheSettings) ([]string, error) {

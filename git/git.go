@@ -8,7 +8,14 @@ import (
 )
 
 func Run(args []string) {
-	_, err := utils.Execute("git", args...)
+	output, errOutput, err := utils.ExecuteWithStderr("git", args...)
+
+	if len(output) > 0 {
+		log.Print(output)
+	}
+	if len(errOutput) > 0 {
+		log.Print(errOutput)
+	}
 	if err != nil {
 		log.Fatal(err)
 	}

@@ -11,12 +11,15 @@ import (
 	"github.com/vinaymayar/sgit/utils"
 )
 
+var logFlags = 0
+
 func main() {
 	flag.Parse()
 	parse(os.Args[1:])
 }
 
 func init() {
+	log.SetFlags(logFlags)
 	utils.MakeSgitRootDir()
 	err := utils.NavToGitRootDir()
 	if err != nil {
@@ -28,7 +31,9 @@ func parse(args []string) {
 	if len(args) > 0 {
 		cmd := args[0]
 		switch {
-		case cache.IsCacheCmd(cmd):
+		case cache.IsClearCacheCmd(cmd):
+			cache.ClearCache(args)
+		case cache.IsGitCacheCmd(cmd):
 			git.RunWithCache(args)
 		case config.IsConfigCmd(cmd):
 			config.Configure()
